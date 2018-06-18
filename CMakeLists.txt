@@ -1,0 +1,38 @@
+cmake_minimum_required(VERSION 3.0)
+
+set(PROJECT_NAME "logging")
+
+project(${PROJECT_NAME} VERSION 1.0.0 LANGUAGES CXX)
+
+get_filename_component(ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/.." ABSOLUTE)
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11 -Wall")
+
+set(INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
+
+set(PUBLIC_HEADERS ${INCLUDE_DIR}/Log.hpp)
+
+add_library(${PROJECT_NAME} SHARED
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Log.cpp
+)
+
+target_include_directories(${PROJECT_NAME} PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>
+)
+
+set_target_properties(
+    ${PROJECT_NAME} PROPERTIES SOVERSION 1.0.0
+    ${PROJECT_NAME} PROPERTIES PUBLIC_HEADER "${PUBLIC_HEADERS}"
+)
+
+target_link_libraries(${PROJECT_NAME}
+    pthread
+)
+
+include(GNUInstallDirs)
+
+install(TARGETS ${PROJECT_NAME}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}
+)
